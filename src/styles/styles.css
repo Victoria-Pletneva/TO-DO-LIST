@@ -1,0 +1,128 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    font-family: "Montserrat", sans-serif;
+}
+h1 {
+    text-align: center;
+}
+p{
+    text-align: center;
+}
+.completed {
+    text-decoration: line-through;
+    color: gray;
+}
+
+.aap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.to-do-form {
+    display: flex;
+    gap: 10px;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.form-input {
+    width: 100%;
+    height: 35px;
+    border: 5px solid #af9ec4;
+    outline: none;
+    border-radius: 8px;
+    padding: 0px 10px;
+    transition: border 0.2s ease-in;
+    font-size: 16px;
+}
+.form-input:focus {
+    border: 2px solid #7700ff;
+    transition: border 0.2s ease-in;
+}
+.form-sumbit {
+    background-color:#7700ff ;
+    border: 2px solid #7700ff;
+    color: white;
+    border-radius: 8px;
+    font-weight: bold;
+    letter-spacing: 0.02em;
+    font-size: 18px;
+    padding: 0px 10px;
+    transition: border 0.2s ease-in;
+    opacity: 1;
+    cursor: pointer;
+}
+.form-sumbit:hover{
+    opacity: 0.0;
+    transition: border 0.2s ease-in;
+}
+.list-item {
+    padding: 10px 10px;
+    display: flex;
+    justify-content: space-between;
+    min-height: 3px;
+    align-items: center;
+    box-shadow: rgba(14, 30, 37, 0.12) 0 2px 4px 0,
+    rgba(14, 30, 37, 0.12) 0 2px 16px 0;
+    border-radius: 8px;
+    gap: 20px;
+}
+.list-item_checkbox {
+    flex-grow: 1;
+    max-width: 30px;
+}
+.list-item_text{
+    flex-grow: 5;
+}
+.list-item_button {
+    flex-grow: 1;
+    max-width: 230px;
+    padding: 8px 5px;
+    color:#ff4141;
+    background-color: white;
+    border: 2px solid #ff4141;
+    border-radius: 8px;
+    font-weight: bold;
+    letter-spacing: 0.02em;
+    font-size:14px;
+    transition:  background-color 0.2s ease-in;
+    cursor: pointer;
+}
+.list-item_button:hover{
+    background-color: #ff4141;
+    color: white;
+    transition:  background-color 0.2s ease-in;
+    
+}
+.to-do-list {
+    box-sizing: border-box;
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 1%;
+    margin-left: auto;
+    margin-right: auto;
+}
+.editable {
+    box-sizing: border-box;
+    outline: none;
+    padding: 5px 5px;
+    border: 2px solid white;
+    border-radius: 8px;
+    transition: border 0.1s ease-in;
+}
+.editable:focus {
+    outline: none;
+    border: 2px #7700ff;
+    border-radius: 8px;
+    padding: 5px 5px;
+    transition: border 0.1s ease-in;
+}
