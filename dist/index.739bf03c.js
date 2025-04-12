@@ -631,7 +631,7 @@ class View {
         if (!toDoList?.length) {
             const emptyListText = this.createElement("p", "empty-list");
             emptyListText.textContent = "\u041D\u0435\u0442 \u0437\u0430\u0434\u0430\u0447";
-            this.toDoList.appendChild(emptyListText);
+            this.toDoList.appendChild(emptyListText); //добавляем в контейнер
             return;
         }
         toDoList.forEach((listItem)=>{
@@ -640,10 +640,9 @@ class View {
             const checkbox = this.createElement("input", "list-item_checkbox");
             checkbox.type = "checkbox";
             checkbox.checked = listItem.completed;
-            const textElement = this.createElement("span", "list-item_text");
+            const textElement = this.createElement("span", "list-item_text"); //отображение
             textElement.textContent = listItem.text;
             textElement.contentEditable = false;
-            // Исправлено: только добавляем класс, если задача завершена
             if (listItem.completed) textElement.classList.add("completed");
             else textElement.classList.remove("completed");
             const deleteBtn = this.createElement("button", "list-item_button");
@@ -662,7 +661,7 @@ class View {
     }
     bindAddToDo(handler) {
         this.form.addEventListener('submit', (event)=>{
-            event.preventDefault();
+            event.preventDefault(); //не перезагружаем страницу
             if (this.toDoText.trim()) {
                 handler(this.toDoText);
                 this.resetInput();
@@ -682,7 +681,7 @@ class View {
             if (event.target.classList.contains("list-item_checkbox")) {
                 const item = event.target.closest(".list-item");
                 const id = Number(item.id);
-                const textElement = item.querySelector(".list-item_text");
+                const textElement = item.querySelector(".list-item_text"); //получение текста
                 const completed = event.target.checked;
                 // Обновляем визуальное состояние
                 textElement.classList.toggle("completed", completed);
@@ -700,10 +699,10 @@ class View {
                 const checkbox = item.querySelector(".list-item_checkbox");
                 const editBtn = event.target;
                 const saveBtn = item.querySelector(".save");
-                // Сохраняем исходные значения
+                //сохранить исходные значения
                 const originalText = textElement.textContent;
                 const originalCompleted = checkbox.checked;
-                // Включаем режим редактирования
+                //включить режим редактирования
                 textElement.contentEditable = true;
                 textElement.focus();
                 editBtn.style.display = "none";

@@ -26,7 +26,7 @@ class View {
         if (!toDoList?.length) {
             const emptyListText = this.createElement("p", "empty-list");
             emptyListText.textContent = "Нет задач";
-            this.toDoList.appendChild(emptyListText);
+            this.toDoList.appendChild(emptyListText); //добавляем в контейнер
             return;
         }
 
@@ -38,11 +38,10 @@ class View {
             checkbox.type = "checkbox";
             checkbox.checked = listItem.completed;
 
-            const textElement = this.createElement("span", "list-item_text");
+            const textElement = this.createElement("span", "list-item_text"); //отображение
             textElement.textContent = listItem.text;
             textElement.contentEditable = false;
             
-            // Исправлено: только добавляем класс, если задача завершена
             if (listItem.completed) {
                 textElement.classList.add("completed");
             } else {
@@ -67,10 +66,10 @@ class View {
         });
     }
 
-    bindAddToDo(handler) {
+    bindAddToDo(handler) { //добавление задачи
         this.form.addEventListener('submit', (event) => {
-            event.preventDefault();
-            if (this.toDoText.trim()) {
+            event.preventDefault(); //не перезагружаем страницу
+            if (this.toDoText.trim()) { //строка не пустая
                 handler(this.toDoText);
                 this.resetInput();
             }
@@ -87,11 +86,11 @@ class View {
     }
 
     bindCompleted(handler) {
-        this.toDoList.addEventListener("change", (event) => {
+        this.toDoList.addEventListener("change", (event) => { //изменение состояния
             if (event.target.classList.contains("list-item_checkbox")) {
                 const item = event.target.closest(".list-item");
                 const id = Number(item.id);
-                const textElement = item.querySelector(".list-item_text");
+                const textElement = item.querySelector(".list-item_text"); //получение текста
                 const completed = event.target.checked;
 
                 // Обновляем визуальное состояние
@@ -113,11 +112,11 @@ class View {
                 const editBtn = event.target;
                 const saveBtn = item.querySelector(".save");
 
-                // Сохраняем исходные значения
+                //сохранить исходные значения
                 const originalText = textElement.textContent;
                 const originalCompleted = checkbox.checked;
 
-                // Включаем режим редактирования
+                //включить режим редактирования
                 textElement.contentEditable = true;
                 textElement.focus();
                 editBtn.style.display = "none";
