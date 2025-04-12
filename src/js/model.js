@@ -1,50 +1,41 @@
 class Model {
-    constructor(){        //this.todos(id , text, completed)
-        this.todos=[];
-
+    constructor() {
+        this.todos = [];
     }
-    get getToDos(){
+
+    get getToDos() {
         return this.todos;
     }
 
-    addToDo(toDoText) {
+    addToDo(text) {
         const todo = {
-            id: this.todos.length > 0 ? this.todos[this.todos.length - 1].id + 1 : 1, 
-            text: toDoText,
+            id: this.todos.length > 0 ? Math.max(...this.todos.map(t => t.id)) + 1 : 1,
+            text: text,
             completed: false
         };
-
-        this.todos.push(todo); //конец массива
-        this.pushToDos(this.todos); // View
-    }
-
-    deleteToDo(id){
-        this.todos = this.todos.filter((todo) => todo.id !== id); //filter - оставить 
+        this.todos.push(todo);
         this.pushToDos(this.todos);
     }
 
-    toggleCompleted(id, newText) {
-        this.todos = this.todos.map((todo) =>
-            todo.id === id ? { ...todo, completed: !todo.completed, text: newText } : todo
+    deleteToDo(id) {
+        this.todos = this.todos.filter(todo => todo.id !== id);
+        this.pushToDos(this.todos);
+    }
+
+    editTodo(id, newText, completed) {
+        this.todos = this.todos.map(todo => 
+            todo.id === id ? { ...todo, text: newText, completed } : todo
         );
         this.pushToDos(this.todos);
     }
-    
 
-    editTodo(id, newText) {
-        this.todos = this.todos.map((todo) =>
-            todo.id === id ? { ...todo, text: newText } : todo
-        );
-        this.pushToDos(this.todos);
-    }
-    
-    bindToDoListChanged(handler){
-        this.onToDoListChanget = handler;
+    bindToDoListChanged(handler) {
+        this.onToDoListChanged = handler;
     }
 
     pushToDos(todos) {
-        this.onToDoListChanget(todos);
+        this.onToDoListChanged(todos);
     }
 }
 
-export{Model};
+export { Model };

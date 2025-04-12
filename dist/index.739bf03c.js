@@ -614,15 +614,9 @@ class View {
         this.input = document.querySelector(".form-input");
         this.toDoList = document.querySelector(".to-do-list");
         this.currentEditingText = "";
-        this.onEditListner();
     }
     get toDoText() {
-        return this.input.value; //form-input
-    }
-    onEditListner() {
-        this.toDoList.addEventListener("input", (event)=>{
-            if (event.target.classList.contains('editable')) this.currentEditingText = event.target.innerText;
-        });
+        return this.input.value;
     }
     resetInput() {
         this.input.value = "";
@@ -633,43 +627,41 @@ class View {
         return element;
     }
     renderToDoList(toDoList) {
-        this.toDoList.replaceChildren();
+        this.toDoList.innerHTML = "";
         if (!toDoList?.length) {
             const emptyListText = this.createElement("p", "empty-list");
             emptyListText.textContent = "\u041D\u0435\u0442 \u0437\u0430\u0434\u0430\u0447";
             this.toDoList.appendChild(emptyListText);
-        } else {
-            const updatedToDoList = toDoList.map((listItem)=>{
-                const toDoItem = this.createElement("div", "list-item");
-                toDoItem.id = listItem.id;
-                const toDoItemCheckbox = this.createElement("input", "list-item_checkbox");
-                toDoItemCheckbox.type = "checkbox";
-                toDoItemCheckbox.checked = listItem.completed;
-                const toDoItemText = this.createElement("span", "list-item_text");
-                toDoItemText.textContent = listItem.text;
-                toDoItemText.classList.add("editable");
-                if (listItem.completed) toDoItemText.classList.add("completed");
-                else toDoItemText.classList.remove("completed");
-                const deleteBth = this.createElement("button", "list-item_button");
-                deleteBth.classList.add("delete");
-                deleteBth.textContent = "\u0423\u0434\u0430\u043B\u0438\u0442\u044C";
-                const editButton = this.createElement("button", "list-item_button");
-                editButton.classList.add("edit");
-                editButton.textContent = "\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C";
-                const saveButton = this.createElement("button", "list-item_button");
-                saveButton.classList.add("save");
-                saveButton.textContent = "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C";
-                saveButton.style.display = "none";
-                toDoItem.append(toDoItemCheckbox, toDoItemText, editButton, saveButton, deleteBth);
-                return toDoItem;
-            });
-            this.toDoList.replaceChildren(...updatedToDoList);
+            return;
         }
+        toDoList.forEach((listItem)=>{
+            const toDoItem = this.createElement("div", "list-item");
+            toDoItem.id = listItem.id;
+            const checkbox = this.createElement("input", "list-item_checkbox");
+            checkbox.type = "checkbox";
+            checkbox.checked = listItem.completed;
+            const textElement = this.createElement("span", "list-item_text");
+            textElement.textContent = listItem.text;
+            textElement.contentEditable = false;
+            if (listItem.completed) textElement.classList.add("completed");
+            const deleteBtn = this.createElement("button", "list-item_button");
+            deleteBtn.classList.add("delete");
+            deleteBtn.textContent = "\u0423\u0434\u0430\u043B\u0438\u0442\u044C";
+            const editBtn = this.createElement("button", "list-item_button");
+            editBtn.classList.add("edit");
+            editBtn.textContent = "\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C";
+            const saveBtn = this.createElement("button", "list-item_button");
+            saveBtn.classList.add("save");
+            saveBtn.textContent = "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C";
+            saveBtn.style.display = "none";
+            toDoItem.append(checkbox, textElement, editBtn, saveBtn, deleteBtn);
+            this.toDoList.appendChild(toDoItem);
+        });
     }
-    bindAdToDo(handler) {
+    bindAddToDo(handler) {
         this.form.addEventListener('submit', (event)=>{
-            event.preventDefault(); // без перезагрузки
-            if (this.toDoText) {
+            event.preventDefault();
+            if (this.toDoText.trim()) {
                 handler(this.toDoText);
                 this.resetInput();
             }
@@ -678,40 +670,54 @@ class View {
     bindDelete(handler) {
         this.toDoList.addEventListener('click', (event)=>{
             if (event.target.classList.contains('delete')) {
-                const id = Number(event.target.parentElement.id);
+                const id = Number(event.target.closest('.list-item').id);
                 handler(id);
             }
         });
     }
     bindCompleted(handler) {
-        this.toDoList.addEventListener("click", (event)=>{
-            if (event.target.type === "checkbox") {
-                const id = Number(event.target.parentElement.id);
-                const textElement = event.target.parentElement.querySelector(".list-item_text");
-                const newText = textElement.textContent; // Берем новый текст
-                handler(id, newText);
+        this.toDoList.addEventListener('change', (event)=>{
+            if (event.target.classList.contains('list-item_checkbox')) {
+                const item = event.target.closest('.list-item');
+                const id = Number(item.id);
+                const text = item.querySelector('.list-item_text').textContent;
+                const completed = event.target.checked;
+                // Обновляем стиль сразу
+                item.querySelector('.list-item_text').classList.toggle('completed', completed);
+                handler(id, text, completed);
             }
         });
     }
     bindEditToDo(handler) {
-        this.toDoList.addEventListener("click", (event)=>{
-            if (event.target.classList.contains("edit")) {
-                const toDoItem = event.target.parentElement;
-                const taskText = toDoItem.querySelector(".list-item_text");
-                const saveButton = toDoItem.querySelector(".save");
-                taskText.contentEditable = true;
-                taskText.classList.add("editable");
-                taskText.focus();
-                event.target.style.display = "none";
-                saveButton.style.display = "inline-block";
-                saveButton.addEventListener("click", ()=>{
-                    const newText = taskText.textContent.trim();
-                    if (newText && newText !== taskText.textContent) handler(toDoItem.id, newText, toDoItem.querySelector(".list-item_checkbox").checked);
-                    taskText.contentEditable = false; // Отключаем редактирование
-                    taskText.classList.remove("editable");
-                    saveButton.style.display = "none"; // Скрываем кнопку "Сохранить"
-                    event.target.style.display = "inline-block"; // Показываем кнопку "Редактировать"
-                });
+        this.toDoList.addEventListener('click', (event)=>{
+            if (event.target.classList.contains('edit')) {
+                const item = event.target.closest('.list-item');
+                const textElement = item.querySelector('.list-item_text');
+                const editBtn = event.target;
+                const saveBtn = item.querySelector('.save');
+                // Включаем редактирование
+                textElement.contentEditable = true;
+                textElement.focus();
+                editBtn.style.display = 'none';
+                saveBtn.style.display = 'inline-block';
+                // Сохраняем исходный текст
+                const originalText = textElement.textContent;
+                const saveHandler = ()=>{
+                    const newText = textElement.textContent.trim();
+                    if (newText) {
+                        const completed = item.querySelector('.list-item_checkbox').checked;
+                        handler(Number(item.id), newText, completed);
+                    } else textElement.textContent = originalText;
+                    // Отключаем редактирование
+                    textElement.contentEditable = false;
+                    saveBtn.style.display = 'none';
+                    editBtn.style.display = 'inline-block';
+                    // Удаляем обработчики
+                    saveBtn.removeEventListener('click', saveHandler);
+                    textElement.removeEventListener('blur', saveHandler);
+                };
+                saveBtn.addEventListener('click', saveHandler);
+                textElement.addEventListener('blur', saveHandler);
             }
         });
     }
@@ -758,39 +764,32 @@ class Model {
     get getToDos() {
         return this.todos;
     }
-    addToDo(toDoText) {
+    addToDo(text) {
         const todo = {
-            id: this.todos.length > 0 ? this.todos[this.todos.length - 1].id + 1 : 1,
-            text: toDoText,
+            id: this.todos.length > 0 ? Math.max(...this.todos.map((t)=>t.id)) + 1 : 1,
+            text: text,
             completed: false
         };
-        this.todos.push(todo); //конец массива
-        this.pushToDos(this.todos); // View
+        this.todos.push(todo);
+        this.pushToDos(this.todos);
     }
     deleteToDo(id) {
-        this.todos = this.todos.filter((todo)=>todo.id !== id); //filter - оставить 
+        this.todos = this.todos.filter((todo)=>todo.id !== id);
         this.pushToDos(this.todos);
     }
-    toggleCompleted(id, newText) {
+    editTodo(id, newText, completed) {
         this.todos = this.todos.map((todo)=>todo.id === id ? {
                 ...todo,
-                completed: !todo.completed,
-                text: newText
-            } : todo);
-        this.pushToDos(this.todos);
-    }
-    editTodo(id, newText) {
-        this.todos = this.todos.map((todo)=>todo.id === id ? {
-                ...todo,
-                text: newText
+                text: newText,
+                completed
             } : todo);
         this.pushToDos(this.todos);
     }
     bindToDoListChanged(handler) {
-        this.onToDoListChanget = handler;
+        this.onToDoListChanged = handler;
     }
     pushToDos(todos) {
-        this.onToDoListChanget(todos);
+        this.onToDoListChanged(todos);
     }
 }
 
@@ -803,7 +802,7 @@ class Controller {
         this.model = model;
         this.view = view;
         this.model.bindToDoListChanged(this.handleChangeToDos);
-        this.view.bindAdToDo(this.handleAddToDo);
+        this.view.bindAddToDo(this.handleAddToDo);
         this.view.bindDelete(this.handleDeleteToDo);
         this.view.bindCompleted(this.handleToggleCompleted);
         this.view.bindEditToDo(this.handleEditToDo);

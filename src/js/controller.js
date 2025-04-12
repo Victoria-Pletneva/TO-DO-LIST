@@ -4,7 +4,7 @@ class Controller {
         this.view = view;
 
         this.model.bindToDoListChanged(this.handleChangeToDos);
-        this.view.bindAdToDo(this.handleAddToDo);
+        this.view.bindAddToDo(this.handleAddToDo);
         this.view.bindDelete(this.handleDeleteToDo);
         this.view.bindCompleted(this.handleToggleCompleted);
         this.view.bindEditToDo(this.handleEditToDo);
