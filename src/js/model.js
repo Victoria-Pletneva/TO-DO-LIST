@@ -24,11 +24,18 @@ class Model {
 
     editTodo(id, newText, completed) {
         this.todos = this.todos.map(todo => 
-            todo.id === id ? { ...todo, text: newText, completed } : todo
+            todo.id === id ? { ...todo, text: newText, completed: completed } : todo
         );
         this.pushToDos(this.todos);
     }
-
+    
+    toggleCompleted(id) {
+        this.todos = this.todos.map(todo => 
+            todo.id === id ? { ...todo, completed: !todo.completed } : todo
+        );
+        this.pushToDos(this.todos);
+    }
+    
     bindToDoListChanged(handler) {
         this.onToDoListChanged = handler;
     }

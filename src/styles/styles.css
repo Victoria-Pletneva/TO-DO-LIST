@@ -126,3 +126,30 @@ p{
     padding: 5px 5px;
     transition: border 0.1s ease-in;
 }
+.list-item_text.completed {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.list-item_text.editing {
+    background-color: #fffde7;
+    outline: 1px solid #ffd600;
+}
+
+/* Отключаем зачеркивание во время редактирования */
+.list-item_text.editing.completed {
+    text-decoration: none;
+}
+.list-item_text.completed {
+    text-decoration: line-through;
+    color: #888;
+    opacity: 0.8;
+}
+
+/* Стиль для элемента в режиме редактирования */
+.list-item_text[contenteditable="true"] {
+    background-color: #fff9c4;
+    padding: 2px 5px;
+    border-radius: 3px;
+    outline: none;
+}

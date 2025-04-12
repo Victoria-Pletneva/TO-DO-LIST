@@ -9,25 +9,23 @@ class Controller {
         this.view.bindCompleted(this.handleToggleCompleted);
         this.view.bindEditToDo(this.handleEditToDo);
 
-
         this.handleChangeToDos(this.model.getToDos);
-
     }
 
     handleChangeToDos = (todos) => {
         this.view.renderToDoList(todos);
     };
-    handleEditToDo = (id, newText) => {
-        this.model.editTodo(id, newText);
+    
+    handleEditToDo = (id, newText, completed) => {   
+        this.model.editTodo(id, newText, completed);
     };
     
     handleDeleteToDo = (id) => {
-        this.model.deleteToDo(id);  // Удаляем из модели
-        this.handleChangeToDos(this.model.getToDos); // Обновляем View
+        this.model.deleteToDo(id);
     };
     
-    handleToggleCompleted = (id, newText) => {
-        this.model.toggleCompleted(id, newText);
+    handleToggleCompleted = (id, text, completed) => {   
+        this.model.editTodo(id, text, completed);
     };
 
     handleAddToDo = (text) => {

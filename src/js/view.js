@@ -33,16 +33,20 @@ class View {
         toDoList.forEach(listItem => {
             const toDoItem = this.createElement("div", "list-item");
             toDoItem.id = listItem.id;
-    
+
             const checkbox = this.createElement("input", "list-item_checkbox");
             checkbox.type = "checkbox";
             checkbox.checked = listItem.completed;
-    
+
             const textElement = this.createElement("span", "list-item_text");
             textElement.textContent = listItem.text;
             textElement.contentEditable = false;
+            
+            // Исправлено: только добавляем класс, если задача завершена
             if (listItem.completed) {
                 textElement.classList.add("completed");
+            } else {
+                textElement.classList.remove("completed");
             }
     
             const deleteBtn = this.createElement("button", "list-item_button");
@@ -83,62 +87,70 @@ class View {
     }
 
     bindCompleted(handler) {
-        this.toDoList.addEventListener('change', (event) => {
-            if (event.target.classList.contains('list-item_checkbox')) {
-                const item = event.target.closest('.list-item');
+        this.toDoList.addEventListener("change", (event) => {
+            if (event.target.classList.contains("list-item_checkbox")) {
+                const item = event.target.closest(".list-item");
                 const id = Number(item.id);
-                const text = item.querySelector('.list-item_text').textContent;
+                const textElement = item.querySelector(".list-item_text");
                 const completed = event.target.checked;
+
+                // Обновляем визуальное состояние
+                textElement.classList.toggle("completed", completed);
+                item.dataset.completed = completed;
                 
-                // Обновляем стиль сразу
-                item.querySelector('.list-item_text').classList.toggle('completed', completed);
-                
-                handler(id, text, completed);
+                // Сохраняем изменения
+                handler(id, textElement.textContent, completed);
             }
         });
     }
 
     bindEditToDo(handler) {
-        this.toDoList.addEventListener('click', (event) => {
-            if (event.target.classList.contains('edit')) {
-                const item = event.target.closest('.list-item');
-                const textElement = item.querySelector('.list-item_text');
+        this.toDoList.addEventListener("click", (event) => {
+            if (event.target.classList.contains("edit")) {
+                const item = event.target.closest(".list-item");
+                const textElement = item.querySelector(".list-item_text");
+                const checkbox = item.querySelector(".list-item_checkbox");
                 const editBtn = event.target;
-                const saveBtn = item.querySelector('.save');
-                
-                // Включаем редактирование
+                const saveBtn = item.querySelector(".save");
+
+                // Сохраняем исходные значения
+                const originalText = textElement.textContent;
+                const originalCompleted = checkbox.checked;
+
+                // Включаем режим редактирования
                 textElement.contentEditable = true;
                 textElement.focus();
-                editBtn.style.display = 'none';
-                saveBtn.style.display = 'inline-block';
-                
-                // Сохраняем исходный текст
-                const originalText = textElement.textContent;
-                
-                const saveHandler = () => {
+                editBtn.style.display = "none";
+                saveBtn.style.display = "inline-block";
+
+                const finishEditing = () => {
                     const newText = textElement.textContent.trim();
+                    const currentCompleted = checkbox.checked;
+
                     if (newText) {
-                        const completed = item.querySelector('.list-item_checkbox').checked;
-                        handler(Number(item.id), newText, completed);
+                        handler(Number(item.id), newText, currentCompleted);
                     } else {
+                        // Если текст пустой, восстанавливаем оригинал
                         textElement.textContent = originalText;
+                        checkbox.checked = originalCompleted;
+                        textElement.classList.toggle("completed", originalCompleted);
+                        item.dataset.completed = originalCompleted;
                     }
-                    
-                    // Отключаем редактирование
+
+                    // Выключаем режим редактирования
                     textElement.contentEditable = false;
-                    saveBtn.style.display = 'none';
-                    editBtn.style.display = 'inline-block';
+                    editBtn.style.display = "inline-block";
+                    saveBtn.style.display = "none";
                     
                     // Удаляем обработчики
-                    saveBtn.removeEventListener('click', saveHandler);
-                    textElement.removeEventListener('blur', saveHandler);
+                    saveBtn.removeEventListener("click", finishEditing);
+                    textElement.removeEventListener("blur", finishEditing);
                 };
-                
-                saveBtn.addEventListener('click', saveHandler);
-                textElement.addEventListener('blur', saveHandler);
+
+                saveBtn.addEventListener("click", finishEditing);
+                textElement.addEventListener("blur", finishEditing);
             }
         });
     }
 }
-
 export { View };

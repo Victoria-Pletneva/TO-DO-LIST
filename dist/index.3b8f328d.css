@@ -134,4 +134,31 @@ h1, p {
   padding: 5px;
   transition: border .1s ease-in;
 }
+
+.list-item_text.completed {
+  color: #888;
+  text-decoration: line-through;
+}
+
+.list-item_text.editing {
+  background-color: #fffde7;
+  outline: 1px solid #ffd600;
+}
+
+.list-item_text.editing.completed {
+  text-decoration: none;
+}
+
+.list-item_text.completed {
+  color: #888;
+  opacity: .8;
+  text-decoration: line-through;
+}
+
+.list-item_text[contenteditable="true"] {
+  background-color: #fff9c4;
+  border-radius: 3px;
+  outline: none;
+  padding: 2px 5px;
+}
 /*# sourceMappingURL=index.3b8f328d.css.map */
