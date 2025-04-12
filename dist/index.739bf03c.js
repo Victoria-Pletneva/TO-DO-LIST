@@ -648,7 +648,6 @@ class View {
                 const toDoItemText = this.createElement("span", "list-item_text");
                 toDoItemText.textContent = listItem.text;
                 toDoItemText.classList.add("editable");
-                // Если выполнено, просто добавляем зачеркивание через CSS-класс
                 if (listItem.completed) toDoItemText.classList.add("completed");
                 else toDoItemText.classList.remove("completed");
                 const deleteBth = this.createElement("button", "list-item_button");

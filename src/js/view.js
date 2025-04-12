@@ -49,7 +49,7 @@ class View {
                 toDoItemText.textContent = listItem.text;
                 toDoItemText.classList.add("editable");
     
-                // Если выполнено, просто добавляем зачеркивание через CSS-класс
+              
                 if (listItem.completed) {
                     toDoItemText.classList.add("completed");
                 } else {
